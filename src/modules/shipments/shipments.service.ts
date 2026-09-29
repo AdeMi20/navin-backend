@@ -627,7 +627,12 @@ export const updateShipmentStatusService = async (
   await invalidateAnalyticsPerformanceCache();
   await invalidateShipmentEtaCache(id);
 
-  // Write ledger block for every status change
+  // Write ledger block for every status change.
+  // transactionHash is intentionally omitted here: the only on-chain tx we have
+  // at this point is the tokenization tx recorded at creation time (stellarTxHash),
+  // which is completely unrelated to a status update.  Citing it would create a
+  // false chain-of-custody link.  Per-event anchoring will populate this field
+  // once real Soroban integration lands (see TODO Part 3 / #358).
   try {
     const canonical = buildCanonicalShipmentPayload({
       shipmentId: id,
@@ -639,10 +644,9 @@ export const updateShipmentStatusService = async (
     await createLedgerBlockService({
       shipmentId: id,
       eventType: status as unknown as MilestoneEvent,
-      transactionHash: shipment.stellarTxHash ?? undefined,
-      dataHash: generateDataHash(canonical),
       actor: actor?.userId,
-      metadata: { previousStatus, canonical },
+      metadata: { previousStatus, simulated: true, canonical },
+      dataHash: generateDataHash(canonical),
     });
   } catch (ledgerErr) {
     logger.warn(
