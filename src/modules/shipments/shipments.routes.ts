@@ -47,7 +47,12 @@ export const shipmentsRouter = Router();
  */
 export const routeRoles = {
   'GET /api/shipments': [UserRole.ADMIN, UserRole.MANAGER, UserRole.VIEWER],
-  'GET /api/shipments/:id': [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.MANAGER, UserRole.VIEWER],
+  'GET /api/shipments/:id': [
+    UserRole.SUPER_ADMIN,
+    UserRole.ADMIN,
+    UserRole.MANAGER,
+    UserRole.VIEWER,
+  ],
   'POST /api/shipments': [UserRole.ADMIN, UserRole.MANAGER],
   'PATCH /api/shipments/:id': [UserRole.ADMIN, UserRole.MANAGER],
   'DELETE /api/shipments/:id': [UserRole.ADMIN, UserRole.MANAGER],
